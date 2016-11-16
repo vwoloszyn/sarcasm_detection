@@ -17,16 +17,19 @@ import pandas as pd
 #http://www.pythonforbeginners.com/python-on-the-web/web-scraping-with-beautifulsoup
 
 def StripTags(text):
-     finished = 0
-     while not finished:
-         finished = 1
-         start = text.find("<")
-         if start >= 0:
-             stop = text[start:].find(">")
-             if stop >= 0:
-                 text = text[:start] + text[start+stop+1:]
-                 finished = 0
-     return text
+         finished = 0
+         text=text.split("<br>")
+         text.remove(text[-1])
+         text=''.join(str(e) for e in text)
+         while not finished:
+            finished = 1
+            start = text.find("<")
+            if start >= 0:
+                stop = text[start:].find(">")
+                if stop >= 0:
+                    text = text[:start] + text[start+stop+1:]
+                    finished = 0
+         return text
 
 def get_quotes(max_pages, tag, ):
 	quotes=[]
