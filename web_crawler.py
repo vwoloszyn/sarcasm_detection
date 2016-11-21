@@ -6,30 +6,23 @@ This is a crawler to get quotes by tags
 Thaaks goodreads.com ;) 
 """
 
-
-
-
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 import urllib2
 import pandas as pd
+
+
 
 #how to use beautifulsoup
 #http://www.pythonforbeginners.com/python-on-the-web/web-scraping-with-beautifulsoup
 
 def StripTags(text):
-         finished = 0
-         text=text.split("<br>")
-         text.remove(text[-1])
-         text=''.join(str(e) for e in text)
-         while not finished:
-            finished = 1
-            start = text.find("<")
-            if start >= 0:
-                stop = text[start:].find(">")
-                if stop >= 0:
-                    text = text[:start] + text[start+stop+1:]
-                    finished = 0
-         return text
+        finished = 0
+        text=text.split("//<![CDATA[")
+        text=str(text[0].encode('utf-8'))
+        text=text.split('―')
+        text=str(text[0])
+        return text
+                    
 
 def get_quotes(max_pages, tag, ):
 	quotes=[]
@@ -37,18 +30,18 @@ def get_quotes(max_pages, tag, ):
 		url="https://www.goodreads.com/quotes/tag/"+str(tag)+"?page="+str(i)+"&utf8=%E2%9C%93"
 		print url
 		page=urllib2.urlopen(url)
-		soup = BeautifulSoup(page.read())
+		soup = BeautifulSoup(page.read(),'html.parser')
 		mydivs = soup.findAll("div", { "class" : "quoteText" })
 		for div in mydivs:
 			quotes.append(StripTags(div.text))
 		
 
-	#return quotes
+	return quotes
 
 
 ##################
 if __name__ == "__main__":
-	max_pages=27
+	max_pages=2
 	tag="sarcastic"
 	dataset_output="sarcasm.csv"
 
@@ -56,6 +49,7 @@ if __name__ == "__main__":
 	quotes = get_quotes(max_pages, tag)
 
 	#saving to csv
-	pd.DataFrame(quotes).to_csv(dataset_output)
+	for q in quotes:
+		print q
 
 
